@@ -15,34 +15,26 @@ class LoadingLTCState extends CurrencySelectionState {}
 
 class LoadingETHState extends CurrencySelectionState {}
 
-class LoadedBTCState extends CurrencySelectionState {
+class LoadedState extends CurrencySelectionState {
   final Data data;
   final String fromCoin;
   final String toCoin;
-  LoadedBTCState(this.data, this.fromCoin, this.toCoin);
+  LoadedState(this.data, this.fromCoin, this.toCoin);
 
   @override
   List<Object> get props => [data, fromCoin, toCoin];
 }
 
-class LoadedLTCState extends CurrencySelectionState {
-  final Data data;
-  final String fromCoin;
-  final String toCoin;
-  LoadedLTCState(this.data, this.fromCoin, this.toCoin);
-
-  @override
-  List<Object> get props => [data, fromCoin, toCoin];
+class LoadedBTCState extends LoadedState {
+  LoadedBTCState(data, fromCoin, toCoin) : super(data, fromCoin, toCoin);
 }
 
-class LoadedETHState extends CurrencySelectionState {
-  final Data data;
-  final String fromCoin;
-  final String toCoin;
-  LoadedETHState(this.data, this.fromCoin, this.toCoin);
+class LoadedLTCState extends LoadedState {
+  LoadedLTCState(data, fromCoin, toCoin) : super(data, fromCoin, toCoin);
+}
 
-  @override
-  List<Object> get props => [data, fromCoin, toCoin];
+class LoadedETHState extends LoadedState {
+  LoadedETHState(data, fromCoin, toCoin) : super(data, fromCoin, toCoin);
 }
 
 class ErrorState extends CurrencySelectionState {}

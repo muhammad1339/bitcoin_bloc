@@ -3,16 +3,22 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../models/models.dart';
 import '../blocs/blocs.dart';
 
-class MainCurrencyPage extends StatelessWidget {
+class MainCurrencyPage extends StatefulWidget {
+  @override
+  _MainCurrencyPageState createState() => _MainCurrencyPageState();
+}
+
+class _MainCurrencyPageState extends State<MainCurrencyPage> {
   String _value = currenciesList.first;
-  String convertedBTC = '$BTC = ? USD';
-  String convertedETH = '$ETH = ? USD';
-  String convertedLTC = '$LTC = ? USD';
+  String _convertedBTC = '$BTC = ? USD';
+  String _convertedETH = '$ETH = ? USD';
+  String _convertedLTC = '$LTC = ? USD';
+
+  CurrencySelectionBloc bloc;
 
   @override
   Widget build(BuildContext context) {
-    final CurrencySelectionBloc bloc =
-        BlocProvider.of<CurrencySelectionBloc>(context);
+    bloc = BlocProvider.of<CurrencySelectionBloc>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -22,12 +28,20 @@ class MainCurrencyPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          buildConvertedContainer(convertedBTC),
-          buildConvertedContainer(convertedETH),
-          buildConvertedContainer(convertedLTC),
+          BlocBuilder<CurrencySelectionBloc, CurrencySelectionState>(
+              bloc: bloc,
+              builder: (context, state) {
+                return Column(
+                  children: <Widget>[
+                    buildConvertedContainer(_convertedBTC),
+                    buildConvertedContainer(_convertedETH),
+                    buildConvertedContainer(_convertedLTC),
+                  ],
+                );
+              }),
           BlocBuilder<CurrencySelectionBloc, CurrencySelectionState>(
             bloc: bloc,
-            builder: (_, state) {
+            builder: (context, state) {
               return Container(
                 height: 80.0,
                 alignment: Alignment.center,
@@ -52,22 +66,22 @@ class MainCurrencyPage extends StatelessWidget {
 
                       if (state is LoadedBTCState) {
                         _value = state.toCoin;
-                        convertedBTC =
+                        _convertedBTC =
                             '1 ${state.fromCoin} = ${state.data.last} ${state.toCoin}';
-                        print('$state ---> $convertedBTC');
+                        print('$state ---> $_convertedBTC');
                       }
 
                       if (state is LoadedETHState) {
                         _value = state.toCoin;
-                        convertedETH =
+                        _convertedETH =
                             '1 ${state.fromCoin} = ${state.data.last} ${state.toCoin}';
-                        print('$state ---> $convertedETH');
+                        print('$state ---> $_convertedETH');
                       }
                       if (state is LoadedLTCState) {
                         _value = state.toCoin;
-                        convertedLTC =
+                        _convertedLTC =
                             '1 ${state.fromCoin} = ${state.data.last} ${state.toCoin}';
-                        print('$state ---> $convertedLTC');
+                        print('$state ---> $_convertedLTC');
                       }
                     }, onDone: () {
                       print('DONE!');
@@ -99,5 +113,14 @@ class MainCurrencyPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    if (bloc != null) {
+      bloc.close();
+    }
   }
 }
