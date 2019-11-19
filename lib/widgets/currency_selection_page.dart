@@ -5,6 +5,9 @@ import '../blocs/blocs.dart';
 
 class MainCurrencyPage extends StatelessWidget {
   String _value = currenciesList.first;
+  String convertedBTC = '$BTC = ? USD';
+  String convertedETH = '$ETH = ? USD';
+  String convertedLTC = '$LTC = ? USD';
 
   @override
   Widget build(BuildContext context) {
@@ -15,43 +18,17 @@ class MainCurrencyPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('Coin Converter'),
       ),
-      body: BlocBuilder<CurrencySelectionBloc, CurrencySelectionState>(
-        bloc: bloc,
-        builder: (context, state) {
-          String convertedBTC = '$BTC = ?USD';
-          String convertedETH = '$ETH = ?USD';
-          String convertedLTC = '$LTC = ?USD';
-          if (state is LoadedBTCState) {
-            _value = state.toCoin;
-            convertedBTC =
-                '1 ${state.fromCoin} = ${state.data.last} ${state.toCoin}';
-            print('$state ---> $convertedBTC');
-          }
-          if (state is LoadedETHState) {
-            _value = state.toCoin;
-            convertedETH =
-                '1 ${state.fromCoin} = ${state.data.last} ${state.toCoin}';
-            print('$state ---> $convertedETH');
-          }
-          if (state is LoadedLTCState) {
-            _value = state.toCoin;
-            convertedLTC =
-                '1 ${state.fromCoin} = ${state.data.last} ${state.toCoin}';
-            print('$state ---> $convertedLTC');
-          }
-
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Column(
-                children: <Widget>[
-                  buildConvertedContainer(convertedBTC),
-                  buildConvertedContainer(convertedLTC),
-                  buildConvertedContainer(convertedETH),
-                ],
-              ),
-              Container(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          buildConvertedContainer(convertedBTC),
+          buildConvertedContainer(convertedETH),
+          buildConvertedContainer(convertedLTC),
+          BlocBuilder<CurrencySelectionBloc, CurrencySelectionState>(
+            bloc: bloc,
+            builder: (_, state) {
+              return Container(
                 height: 80.0,
                 alignment: Alignment.center,
                 color: Colors.blue,
@@ -70,15 +47,40 @@ class MainCurrencyPage extends StatelessWidget {
                     );
                   }).toList(),
                   onChanged: (selected) {
+                    bloc.listen((state) {
+                      print('onData : $state');
+
+                      if (state is LoadedBTCState) {
+                        _value = state.toCoin;
+                        convertedBTC =
+                            '1 ${state.fromCoin} = ${state.data.last} ${state.toCoin}';
+                        print('$state ---> $convertedBTC');
+                      }
+
+                      if (state is LoadedETHState) {
+                        _value = state.toCoin;
+                        convertedETH =
+                            '1 ${state.fromCoin} = ${state.data.last} ${state.toCoin}';
+                        print('$state ---> $convertedETH');
+                      }
+                      if (state is LoadedLTCState) {
+                        _value = state.toCoin;
+                        convertedLTC =
+                            '1 ${state.fromCoin} = ${state.data.last} ${state.toCoin}';
+                        print('$state ---> $convertedLTC');
+                      }
+                    }, onDone: () {
+                      print('DONE!');
+                    });
                     bloc.add(ConvertEvent(fromCoin: BTC, toCoin: selected));
-                    bloc.add(ConvertEvent(fromCoin: LTC, toCoin: selected));
                     bloc.add(ConvertEvent(fromCoin: ETH, toCoin: selected));
+                    bloc.add(ConvertEvent(fromCoin: LTC, toCoin: selected));
                   },
                 ),
-              ),
-            ],
-          );
-        },
+              );
+            },
+          ),
+        ],
       ),
     );
   }

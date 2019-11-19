@@ -23,19 +23,16 @@ class CurrencySelectionBloc
           yield LoadingBTCState();
           Data data = await bitCoinRepo.getData(event.fromCoin, event.toCoin);
           yield LoadedBTCState(data, event.fromCoin, event.toCoin);
-          //print(event.fromCoin);
         }
         if (event.fromCoin == LTC) {
           yield LoadingLTCState();
           Data data = await bitCoinRepo.getData(event.fromCoin, event.toCoin);
           yield LoadedLTCState(data, event.fromCoin, event.toCoin);
-          //print(event.fromCoin);
         }
         if (event.fromCoin == ETH) {
           yield LoadingETHState();
           Data data = await bitCoinRepo.getData(event.fromCoin, event.toCoin);
           yield LoadedETHState(data, event.fromCoin, event.toCoin);
-          //print(event.fromCoin);
         }
       } catch (e) {
         yield ErrorState();
